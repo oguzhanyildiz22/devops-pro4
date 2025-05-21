@@ -1,12 +1,12 @@
 pipeline {
     agent any
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
     }
     stages {
         stage('Clone') {
             steps {
-                git branch: 'main', url: 'https://github.com/oguzhanyildiz22/devops-pro4.git'
+                git 'https://github.com/oguzhanyildiz22/devops-pro4.git'
             }
         }
         stage('Build') {
@@ -31,14 +31,17 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f k8s/deployment.yaml'
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh 'kubectl apply -f k8s/deployment.yaml'
+                }
             }
         }
         stage('Expose Service') {
             steps {
-                sh 'kubectl apply -f k8s/service.yaml'
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh 'kubectl apply -f k8s/service.yaml'
+                }
             }
         }
     }
-
 }
