@@ -7,17 +7,11 @@ pipeline {
         stage('Clone') {
             steps {
                 git url: 'https://github.com/oguzhanyildiz22/devops-pro4', branch: 'main'
-                sh 'ls -l k8s/'
             }
         }
         stage('Build') {
             steps {
                 sh 'mvn clean package'
-            }
-        }
-        stage('Setup Minikube Docker Env') {
-            steps {
-                sh 'eval $(minikube docker-env)'
             }
         }
         stage('Build Docker Image') {
@@ -37,26 +31,12 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                kubectl config use-context minikube
-                if [ ! -f k8s/deployment.yaml ]; then
-                    echo "Hata: k8s/deployment.yaml bulunamadı!"
-                    exit 1
-                fi
-                kubectl apply -f k8s/deployment.yaml
-                '''
+                sh 'kubectl apply -f k8s/deployment.yaml'
             }
         }
         stage('Expose Service') {
             steps {
-                sh '''
-                kubectl config use-context minikube
-                if [ ! -f k8s/service.yaml ]; then
-                    echo "Hata: k8s/service.yaml bulunamadı!"
-                    exit 1
-                fi
-                kubectl apply -f k8s/service.yaml
-                '''
+                sh 'kubectl apply -f k8s/service.yaml'
             }
         }
     }
