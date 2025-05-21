@@ -1,21 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: demo-app
-  labels:
-    app: demo-app
+  name: demo-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: demo-app
+      app: demo
   template:
     metadata:
       labels:
-        app: demo-app
+        app: demo
     spec:
       containers:
-      - name: demo-app
-        image: oguzhanyldz/demo-app:latest
-        ports:
-        - containerPort: 8080
+        - name: demo
+          image:oguzhanyldz/demo:latest
+          ports:
+            - containerPort: 8081
