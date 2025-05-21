@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: demo
-          image:oguzhanyldz/demo:latest
+          image: oguzhanyldz/demo:latest
           ports:
             - containerPort: 8081
