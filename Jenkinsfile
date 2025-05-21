@@ -6,17 +6,17 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                git branch: 'main', url: 'https://github.com/oguzhanyildiz22/devops-pro4.git'
+                git url: 'https://github.com/oguzhanyildiz22/devops-pro4', branch: 'main'
             }
         }
         stage('Build') {
             steps {
-                sh './mvnw clean package'
+                sh 'mvn clean package'
             }
         }
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t oguzhanyldz/demo-app:latest .'
+                sh 'docker build -t oguzhanyldz/demo:latest .'
             }
         }
         stage('Login to DockerHub') {
@@ -24,23 +24,19 @@ pipeline {
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
         }
-        stage('Push Docker Image') {
+        stage('Push to DockerHub') {
             steps {
-                sh 'docker push oguzhanyldz/demo-app:latest'
+                sh 'docker push oguzhanyldz/demo:latest'
             }
         }
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                    sh 'kubectl apply -f k8s/deployment.yaml'
-                }
+                sh 'kubectl apply -f deployment.yaml'
             }
         }
         stage('Expose Service') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                    sh 'kubectl apply -f k8s/service.yaml'
-                }
+                sh 'kubectl apply -f service.yaml'
             }
         }
     }
