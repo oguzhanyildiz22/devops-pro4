@@ -31,12 +31,12 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f k8s/deployment.yaml'
+                sh '/var/lib/jenkins/kubectl apply -f k8s/deployment.yaml'
             }
         }
         stage('Expose Service') {
             steps {
-                sh 'kubectl apply -f k8s/service.yaml'
+                sh '/var/lib/jenkins/kubectl apply -f k8s/service.yaml'
             }
         }
     }
